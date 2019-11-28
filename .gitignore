@@ -7,3 +7,6 @@
 
 # .tfvars files
 terraform.tfvars
+
+#AS3 Declaration
+as3_declaration.json
