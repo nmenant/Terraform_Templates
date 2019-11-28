@@ -43,7 +43,7 @@ AS3_FN=$(basename "$AS3_URL")
 TS_URL='${TS_URL}'
 TS_FN=$(basename "$TS_URL")
 
-#F5_BEACON_TOKEN = '${F5_BEACON_TOKEN}'
+F5_BEACON_TOKEN = '${F5_BEACON_TOKEN}'
 ADMIN_PWD='${ADMIN_PASSWD}'
 
 mkdir -p ${libs_dir}
@@ -77,12 +77,12 @@ restcurl -X POST "shared/iapp/package-management-tasks" -d $DATA
 
 sleep 5
 
-tmsh modify auth password admin $ADMIN_PWD
+tmsh modify auth user admin password $ADMIN_PWD
 
 tmsh save sys config
 
 sleep 10
 
-#DATA="{ \"class\":\"Telemetry\",\"controls\":{ \"class\":\"Controls\",\"logLevel\":\"debug\"},\"Poller\":{ \"class\":\"Telemetry_System_Poller\",\"interval\":60,\"enable\":true,\"trace\":false,\"allowSelfSignedCert\":false, \"host\":\"localhost\",\"port\":8100,\"protocol\":\"http\"},\"Beacon_Consumer\":{ \"class\":\"Telemetry_Consumer\",\"type\":\"Generic_HTTP\",\"host\":\"ingestion.ovr.prd.f5aas.com\",\"protocol\":\"https\",\"port\":50443,\"path\":\"/beacon/v1/ingest-telemetry-streaming\",\"method\":\"POST\",\"enable\":true,\"trace\":false,\"headers\":[ { \"name\":\"grpc-metadata-x-f5-ingestion-token\",\"value\":\"\`\>@/passphrase\`\"}],\"passphrase\":{ \"cipherText\":\"$F5_BEACON_TOKEN\"}},\"schemaVersion\":\"1.0.0\"}"
+DATA="{ \"class\":\"Telemetry\",\"controls\":{ \"class\":\"Controls\",\"logLevel\":\"debug\"},\"Poller\":{ \"class\":\"Telemetry_System_Poller\",\"interval\":60,\"enable\":true,\"trace\":false,\"allowSelfSignedCert\":false, \"host\":\"localhost\",\"port\":8100,\"protocol\":\"http\"},\"Beacon_Consumer\":{ \"class\":\"Telemetry_Consumer\",\"type\":\"Generic_HTTP\",\"host\":\"ingestion.ovr.prd.f5aas.com\",\"protocol\":\"https\",\"port\":50443,\"path\":\"/beacon/v1/ingest-telemetry-streaming\",\"method\":\"POST\",\"enable\":true,\"trace\":false,\"headers\":[ { \"name\":\"grpc-metadata-x-f5-ingestion-token\",\"value\":\"\`\>@/passphrase\`\"}],\"passphrase\":{ \"cipherText\":\"$F5_BEACON_TOKEN\"}},\"schemaVersion\":\"1.0.0\"}"
 
 #restcurl -s -u $CREDS -X POST "/mgmt/shared/telemetry/declare" $DATA

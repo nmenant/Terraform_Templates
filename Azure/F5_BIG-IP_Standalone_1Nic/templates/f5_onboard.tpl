@@ -78,6 +78,6 @@ restcurl -X POST "shared/iapp/package-management-tasks" -d $DATA
 
 sleep 5
 
-tmsh modify auth password admin $ADMIN_PWD
+tmsh modify auth user admin password $ADMIN_PWD
 
 tmsh save sys config
