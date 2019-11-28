@@ -8,9 +8,9 @@
     "id": "fghijkl7890",
     "label": "Sample 1",
     "remark": "HTTP with custom persistence",
-    "Sample_http_01": {
+    "as3": {
       "class": "Tenant",
-      "A1": {
+      "my-web-app": {
         "class": "Application",
         "template": "http",
         "serviceMain": {
