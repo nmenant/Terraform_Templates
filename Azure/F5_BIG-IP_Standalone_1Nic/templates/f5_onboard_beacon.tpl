@@ -36,14 +36,15 @@ done
 ### DOWNLOAD ONBOARDING PKGS
 # Could be pre-packaged or hosted internally
 
+#Loading variables from Terraform
+
 DO_URL='${DO_URL}'
 DO_FN=$(basename "$DO_URL")
 AS3_URL='${AS3_URL}'
 AS3_FN=$(basename "$AS3_URL")
 TS_URL='${TS_URL}'
 TS_FN=$(basename "$TS_URL")
-
-F5_BEACON_TOKEN = '${F5_BEACON_TOKEN}'
+F5_BEACON_TOKEN='${F5_BEACON_TOKEN}'
 ADMIN_PWD='${ADMIN_PASSWD}'
 
 mkdir -p ${libs_dir}
@@ -56,6 +57,8 @@ curl -L -o ${libs_dir}/$AS3_FN $AS3_URL
 
 echo -e "\n"$(date) "Download TS Pkg"
 curl -L -o ${libs_dir}/$TS_FN $TS_URL
+
+sleep 20
 
 # Copy the RPM Pkg to the file location
 cp ${libs_dir}/*.rpm /var/config/rest/downloads/
@@ -81,8 +84,17 @@ tmsh modify auth user admin password $ADMIN_PWD
 
 tmsh save sys config
 
-sleep 10
+sleep 30
 
-DATA="{ \"class\":\"Telemetry\",\"controls\":{ \"class\":\"Controls\",\"logLevel\":\"debug\"},\"Poller\":{ \"class\":\"Telemetry_System_Poller\",\"interval\":60,\"enable\":true,\"trace\":false,\"allowSelfSignedCert\":false, \"host\":\"localhost\",\"port\":8100,\"protocol\":\"http\"},\"Beacon_Consumer\":{ \"class\":\"Telemetry_Consumer\",\"type\":\"Generic_HTTP\",\"host\":\"ingestion.ovr.prd.f5aas.com\",\"protocol\":\"https\",\"port\":50443,\"path\":\"/beacon/v1/ingest-telemetry-streaming\",\"method\":\"POST\",\"enable\":true,\"trace\":false,\"headers\":[ { \"name\":\"grpc-metadata-x-f5-ingestion-token\",\"value\":\"\`\>@/passphrase\`\"}],\"passphrase\":{ \"cipherText\":\"$F5_BEACON_TOKEN\"}},\"schemaVersion\":\"1.0.0\"}"
+echo -e "registering device with F5 Beacon"
 
-#restcurl -s -u $CREDS -X POST "/mgmt/shared/telemetry/declare" $DATA
+DATA="{ \"class\":\"Telemetry\",\"controls\":{ \"class\":\"Controls\",\"logLevel\":\"debug\"},\"Poller\":{ \"class\":\"Telemetry_System_Poller\",\"interval\":60,\"enable\":true,\"trace\":false,\"allowSelfSignedCert\":false, \"host\":\"localhost\",\"port\":8100,\"protocol\":\"http\"},\"Beacon_Consumer\":{ \"class\":\"Telemetry_Consumer\",\"type\":\"Generic_HTTP\",\"host\":\"ingestion.ovr.prd.f5aas.com\",\"protocol\":\"https\",\"port\":50443,\"path\":\"/beacon/v1/ingest-telemetry-streaming\",\"method\":\"POST\",\"enable\":true,\"trace\":false,\"headers\":[ { \"name\":\"grpc-metadata-x-f5-ingestion-token\",\"value\":\"\`>@/passphrase\`\"}],\"passphrase\":{ \"cipherText\":\"$F5_BEACON_TOKEN\"}},\"schemaVersion\":\"1.0.0\"}"
+
+echo $DATA > /var/tmp/TS_Beacon_declaration.json 
+
+#issues with restcurl to process this json payload ... to be investigated
+#we use port 8443 since we deployed a 1NIC interface BIG-IP
+
+curl -sk -u admin:$ADMIN_PWD -H "Content-type: Application/json" -X POST "https://127.0.0.1:8443/mgmt/shared/telemetry/declare" -d @/var/tmp/TS_Beacon_declaration.json
+
+rm /var/tmp/TS_Beacon_declaration.json
