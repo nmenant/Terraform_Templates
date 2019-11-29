@@ -30,6 +30,11 @@ data "azurerm_key_vault_secret" "f5_beacon_token" {
   key_vault_id = "${data.azurerm_key_vault.keyvault.id}"
 }
 
+data "azurerm_key_vault_secret" "nginx_beacon_token" {
+  name = "nginx-beacon-token" 
+  key_vault_id = "${data.azurerm_key_vault.keyvault.id}"
+}
+
 module "azure_f5_standalone" {
   source            = "../terraform_modules/azure_F5_standalone_1nic"
   azure_region      = var.azure_region
@@ -47,6 +52,7 @@ module "azure_f5_standalone" {
   ADMIN_PASSWD      = data.azurerm_key_vault_secret.bigip_admin_password.value
   F5_BEACON_TOKEN   = data.azurerm_key_vault_secret.f5_beacon_token.value
   f5_ssh_publickey  = file(pathexpand(var.key_path))
+
 }
 
 module "azure_ressourcegroup" {
@@ -74,13 +80,14 @@ module "azure_ubuntu_systems" {
   ubuntu_instance_count = var.ubuntu_instance_count
   ubuntu_instance_size  = var.ubuntu_instance_size
   app_tag_value         = var.app_tag_value
+  NGINX_BEACON_TOKEN       = data.azurerm_key_vault_secret.nginx_beacon_token.value
 }
 
 data "template_file" "as3_declaration" {
   template = file("./templates/as3_declaration.tpl")
   vars = {
     azure_F5_public_ip  = module.azure_f5_standalone.f5_public_ip
-    azure_f5_pool_members = join("','", module.azure_ubuntu_systems.ubuntu_private_ips)
+    azure_f5_pool_members = join("\",\n\"", module.azure_ubuntu_systems.ubuntu_private_ips)
   }
 }
 
@@ -88,4 +95,3 @@ resource "local_file" "as3_declaration_file" {
   content  = data.template_file.as3_declaration.rendered
   filename = "./as3_declaration.json"
 }
-

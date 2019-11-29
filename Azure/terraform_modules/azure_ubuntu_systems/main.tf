@@ -86,6 +86,18 @@ resource "azurerm_storage_account" "azure_storage_account" {
     }
 }
 
+data "template_file" "ubuntu_cloudinit" {
+  template = file("./templates/ubuntu_cloudinit.tpl")
+  vars = {
+    NGINX_BEACON_TOKEN  = var.NGINX_BEACON_TOKEN
+  }
+}
+
+resource "local_file" "ubuntu_cloudinit" {
+  content  = data.template_file.ubuntu_cloudinit.rendered
+  filename = "ubuntu_cloudinit.conf"
+}
+
 resource "azurerm_virtual_machine" "azure_az1_ubuntu_vm" {
     count                 = var.ubuntu_instance_count
     name                  = "${var.owner}-ubuntu-NGINX-az1-${format("%02d", count.index+1)}"
@@ -93,7 +105,7 @@ resource "azurerm_virtual_machine" "azure_az1_ubuntu_vm" {
     resource_group_name   = var.azure_rg_name
     network_interface_ids = [element(azurerm_network_interface.ubuntu_az1_privatenics.*.id, count.index)]
     vm_size               = var.ubuntu_instance_size
-    zones                  = [var.ubuntu_subnet_id_az1]
+    zones                 = [var.ubuntu_subnet_id_az1]
 
     # Uncomment this line to delete the OS disk automatically when deleting the VM
     delete_os_disk_on_termination = true
@@ -119,7 +131,7 @@ resource "azurerm_virtual_machine" "azure_az1_ubuntu_vm" {
     os_profile {
         computer_name   = "${var.owner}-ubuntu-NGINX-az1-${format("%02d", count.index+1)}"
         admin_username  = var.ubuntu_username
-        custom_data     = "${file("ubuntu_packages.conf")}"
+        custom_data     = data.template_file.ubuntu_cloudinit.rendered
     }
 
     os_profile_linux_config {
@@ -141,7 +153,10 @@ resource "azurerm_virtual_machine" "azure_az1_ubuntu_vm" {
     }
 }
 
+
+
 resource "azurerm_virtual_machine" "azure_az2_ubuntu_vm" {
+    depends_on            = [local_file.ubuntu_cloudinit]
     count                 = var.ubuntu_instance_count
     name                  = "${var.owner}-ubuntu-NGINX-az2-${format("%02d", count.index+1)}"
     location              = var.azure_region
@@ -167,6 +182,7 @@ resource "azurerm_virtual_machine" "azure_az2_ubuntu_vm" {
     os_profile {
         computer_name  = "${var.owner}-ubuntu-NGINX-az2-${format("%02d", count.index+1)}"
         admin_username = "azureuser"
+        custom_data     = data.template_file.ubuntu_cloudinit.rendered
     }
 
     os_profile_linux_config {

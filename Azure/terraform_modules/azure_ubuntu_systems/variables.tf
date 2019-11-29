@@ -76,3 +76,7 @@ variable "private_subnet1_cidr" {
 #variable "private_subnet2_cidr" {
 #  type = "string"
 #}
+
+variable "NGINX_BEACON_TOKEN" { 
+  type = "string"
+}
