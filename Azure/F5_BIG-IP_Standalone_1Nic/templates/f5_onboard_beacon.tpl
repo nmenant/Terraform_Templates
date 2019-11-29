@@ -58,7 +58,7 @@ curl -L -o ${libs_dir}/$AS3_FN $AS3_URL
 echo -e "\n"$(date) "Download TS Pkg"
 curl -L -o ${libs_dir}/$TS_FN $TS_URL
 
-sleep 20
+sleep 5
 
 # Copy the RPM Pkg to the file location
 cp ${libs_dir}/*.rpm /var/config/rest/downloads/
@@ -68,10 +68,14 @@ DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/download
 echo -e "\n"$(date) "Install DO Pkg"
 restcurl -X POST "shared/iapp/package-management-tasks" -d $DATA
 
+sleep 5 
+
 # Install AS3 Pkg
 DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$AS3_FN\"}"
 echo -e "\n"$(date) "Install AS3 Pkg"
 restcurl -X POST "shared/iapp/package-management-tasks" -d $DATA
+
+sleep 5 
 
 # Install TS Pkg
 DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$TS_FN\"}"
@@ -84,13 +88,13 @@ tmsh modify auth user admin password $ADMIN_PWD
 
 tmsh save sys config
 
-sleep 30
+sleep 40
 
 echo -e "registering device with F5 Beacon"
 
 DATA="{ \"class\":\"Telemetry\",\"controls\":{ \"class\":\"Controls\",\"logLevel\":\"debug\"},\"Poller\":{ \"class\":\"Telemetry_System_Poller\",\"interval\":60,\"enable\":true,\"trace\":false,\"allowSelfSignedCert\":false, \"host\":\"localhost\",\"port\":8100,\"protocol\":\"http\"},\"Beacon_Consumer\":{ \"class\":\"Telemetry_Consumer\",\"type\":\"Generic_HTTP\",\"host\":\"ingestion.ovr.prd.f5aas.com\",\"protocol\":\"https\",\"port\":50443,\"path\":\"/beacon/v1/ingest-telemetry-streaming\",\"method\":\"POST\",\"enable\":true,\"trace\":false,\"headers\":[ { \"name\":\"grpc-metadata-x-f5-ingestion-token\",\"value\":\"\`>@/passphrase\`\"}],\"passphrase\":{ \"cipherText\":\"$F5_BEACON_TOKEN\"}},\"schemaVersion\":\"1.0.0\"}"
 
-echo $DATA > /var/tmp/TS_Beacon_declaration.json 
+echo -e $DATA > /var/tmp/TS_Beacon_declaration.json 
 
 #issues with restcurl to process this json payload ... to be investigated
 #we use port 8443 since we deployed a 1NIC interface BIG-IP
