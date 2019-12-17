@@ -88,9 +88,6 @@ resource "azurerm_storage_account" "azure_storage_account" {
 
 data "template_file" "ubuntu_cloudinit" {
   template = file("./templates/ubuntu_cloudinit.tpl")
-  vars = {
-    NGINX_BEACON_TOKEN  = var.NGINX_BEACON_TOKEN
-  }
 }
 
 resource "local_file" "ubuntu_cloudinit" {
