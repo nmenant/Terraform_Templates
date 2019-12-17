@@ -1,35 +1,58 @@
-Terraform and Ansible deployment templates
-==========================================
+F5 BIG-IP Single NIC deployment
+===============================
 
-This repo contains some generic templates to deploy systems using Terraform and Ansible.
+This folder contain a Terraform template to deploy the following:
 
-Terraform is used to deploy the systems while Ansible will take care of the configuration of those systems.
+* 1 F5 BIG-IP Standalone deployed with Single NIC
+* 2 Ubuntu instances deployed with NGINX as web servers
 
-Remarks - Terraform
--------------------
+Azure Keyvault
+--------------
 
-* make sure that your Azure credentials are set on your system (env variables): <https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure>
-* update terraform/terraform.tfvars to deploy the infrastructure components acordingly (specifically the AllowedIPs to allow access from your public IP to your env). If you want more customization, you may check terraform/variables.tf 
+We don't want to include sensitive date into our template. We will store our data into *Azure KeyVault*:
+
+* F5 username password once the platform will be provisioned
+
+You need to create an Azure Keyvault and store this information into 3 different *secrets*:
+
+* bigip-admin-user-password
+
+![Screenshot](pictures/AzureKeyVault_Secrets.png)
+
+HowTo
+-----
+
+Make sure that your Azure credentials are set on your system (env variables): <https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure>
+
+To be able to use this terraform template, you'll need to create the relevant *terraform.tfvars* file. You can use *terraform-example.tfvars* as your starting point (rename/copy it into *terraform.tfvars*)
+
+Here is how to populate *terraform.tfvars*:
+
+terraform.tfvars:
+
+* owner : Name of the owner of this template. Used to name objects
+* project_name : Name of the project. Used to name objects
+* azure_region : Azure region to use to create the relevant objects
+* azure_secret_rg : Name of the ressource group containing your keyvault / secret
+* azure_keyvault_name : Name of the keyvault
+
+![Screenshot](pictures/AzureKeyVault.png)
+
+your KeyVault **MUST** contain a secret called: *bigip-admin-user-password*. This is the secret that Terraform will retrieve to use as the F5 username password
+
+![Screenshot](pictures/AzureKeyVault_Secrets.png)
+
+* azure_az1 : Azure AZ 1 to use
+* azure_az2 : Azure AZ 2 to use. We will use 2 to spread our nginx instances
+* key_path : Key path of your ssh public key. Something like "~/.ssh/id_rsa.pub"
+* AllowedIPs : Public IPs allowed to access the environment
+* f5_version : F5 version to use
+* f5_image_name : name of the F5 image to use
+* f5_product_name : F5 product name
+* app_tag_value : Value assigned to the tag key Application
+
+Deployment
+----------
+
 * do *terraform init* / *terraform get* / *terraform plan* / *terraform apply* to deploy your infrastructure
 * *terraform output* will give you the relevant public IPs related to your infrastructure.
-
-Remarks - Ansible
------------------
-
-* ansible/inventory/hosts will be created automatically by Terraform. *vs_ip* in the hosts file is the PRIVATE IP of your BIG-IP.
-* playbooks/group_vars/F5_systems/vars will list your ubuntu PRIVATE IPs (variable LIST_AS3_POOL_SERVERS). This is created automatically by Terraform
-* Update ansible/playbooks/group_vars/all file with the location of your private key
-* You MUST create a file called f5_vault in ansible/playbooks/group_vars/F5_systems. You need to create this file yourself to store the admin password that will be used on your BIG-IP. The corresponding variables name to setup is: VAULT_ADMIN_PASSWORD. Example of f5_vault file: 
-
-```yaml
-
-    ---
-
-    VAULT_ADMIN_PASSWORD: "myF5Password!"
-
-
-```
-
-* Once it's done, encrypt the file with the command *ansible-vault encrypt ansible/playbooks/group_vars/F5_systems/vault*
-* update your ansible roles accordingly
-* You can run *ansible-playbook -i inventory/hosts site.yml --ask-vault-pass*
