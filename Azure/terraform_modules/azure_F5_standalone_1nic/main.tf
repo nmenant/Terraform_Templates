@@ -57,7 +57,6 @@ data "template_file" "f5_bigip_onboard" {
     AS3_URL		      = var.AS3_URL
     TS_URL          = var.TS_URL
     ADMIN_PASSWD    = var.ADMIN_PASSWD
-    F5_BEACON_TOKEN = var.F5_BEACON_TOKEN
     libs_dir		    = var.libs_dir
     onboard_log		  = var.onboard_log
   }
