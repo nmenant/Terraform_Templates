@@ -25,6 +25,16 @@ data "azurerm_key_vault_secret" "bigip_admin_password" {
   key_vault_id = "${data.azurerm_key_vault.keyvault.id}"
 }
 
+data "azurerm_key_vault_secret" "f5_beacon_token" {
+  name = "f5-beacon-token" 
+  key_vault_id = "${data.azurerm_key_vault.keyvault.id}"
+}
+
+data "azurerm_key_vault_secret" "nginx_beacon_token" {
+  name = "nginx-beacon-token" 
+  key_vault_id = "${data.azurerm_key_vault.keyvault.id}"
+}
+
 module "azure_ressourcegroup" {
   source       = "../terraform_modules/azure_ressourcegroup"
   owner        = "${var.owner}-${var.project_name}"
@@ -32,7 +42,7 @@ module "azure_ressourcegroup" {
 }
 
 module "azure_f5_standalone" {
-  source            = "../terraform_modules/azure_F5_standalone_1nic"
+  source            = "../terraform_modules/azure_F5_beacon_standalone_1nic"
   azure_region      = var.azure_region
   azure_rg_name     = module.azure_ressourcegroup.azure_rg_name
   subnet1_public_id = module.azure_ressourcegroup.public_subnet1_id
@@ -46,11 +56,12 @@ module "azure_f5_standalone" {
   AS3_URL           = var.AS3_URL
   TS_URL            = var.TS_URL
   ADMIN_PASSWD      = data.azurerm_key_vault_secret.bigip_admin_password.value
+  F5_BEACON_TOKEN   = data.azurerm_key_vault_secret.f5_beacon_token.value
   f5_ssh_publickey  = file(pathexpand(var.key_path))
 }
 
 module "azure_ubuntu_systems" {
-  source               = "../terraform_modules/azure_nginx_systems"
+  source               = "../terraform_modules/azure_nginx_beacon_systems"
   azure_region         = var.azure_region
   owner                = "${var.owner}-${var.project_name}"
   ubuntu_subnet_id_az1 = var.azure_az1
@@ -68,6 +79,7 @@ module "azure_ubuntu_systems" {
   ubuntu_instance_count = var.ubuntu_instance_count
   ubuntu_instance_size  = var.ubuntu_instance_size
   app_tag_value         = var.app_tag_value
+  NGINX_BEACON_TOKEN       = data.azurerm_key_vault_secret.nginx_beacon_token.value
 }
 
 data "template_file" "as3_declaration" {

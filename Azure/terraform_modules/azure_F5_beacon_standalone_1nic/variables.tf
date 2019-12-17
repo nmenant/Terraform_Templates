@@ -59,3 +59,7 @@ variable "TS_URL" {
 variable "ADMIN_PASSWD" { 
   type = "string"
 }
+
+variable "F5_BEACON_TOKEN" { 
+  type = "string"
+}
