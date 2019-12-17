@@ -32,25 +32,8 @@ resource "azurerm_network_interface" "bigip1_nic" {
   }
 }
 
-# Install AS3, TS and DO on BIG-IP and setup admin password
-# comment if you plan to use F5 BEACON
-#data "template_file" "f5_bigip_onboard" {
-#  template = file("./templates/f5_onboard.tpl")
-
-#  vars = {
-#    DO_URL          = var.DO_URL
-#    AS3_URL		      = var.AS3_URL
-#    TS_URL          = var.TS_URL
-#    ADMIN_PASSWD    = var.ADMIN_PASSWD
-#    libs_dir		    = var.libs_dir
-#    onboard_log		  = var.onboard_log
-#  }
-#}
-
-# Install AS3,TS and DO on BIG-IP, setup admin password and register device to F5 BEACON
-# comment if you don't plan to use F5 BEACON
 data "template_file" "f5_bigip_onboard" {
-  template = file("./templates/f5_onboard_beacon.tpl")
+  template = file("./templates/f5_onboard.tpl")
 
   vars = {
     DO_URL          = var.DO_URL
@@ -132,9 +115,6 @@ resource "azurerm_virtual_machine_extension" "f5-bigip1-run-startup-cmd" {
   publisher            = "Microsoft.OSTCExtensions"
   type                 = "CustomScriptForLinux"
   type_handler_version = "1.2"
-  # publisher            = "Microsoft.Azure.Extensions"
-  # type                 = "CustomScript"
-  # type_handler_version = "2.0"
 
   settings = <<SETTINGS
     {
