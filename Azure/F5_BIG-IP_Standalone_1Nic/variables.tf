@@ -53,16 +53,15 @@ variable "f5_product_name" {}
 
 ## Please check and update the latest DO URL from https://github.com/F5Networks/f5-declarative-onboarding/releases
 variable "DO_URL" {
-  default = "https://github.com/F5Networks/f5-declarative-onboarding/releases/download/v1.8.0/f5-declarative-onboarding-1.8.0-2.noarch.rpm"
+  default = "https://github.com/F5Networks/f5-declarative-onboarding/releases/download/v1.11.1/f5-declarative-onboarding-1.11.1-1.noarch.rpm"
 }
 
 ## Please check and update the latest AS3 URL from https://github.com/F5Networks/f5-appsvcs-extension/releases/latest 
 variable "AS3_URL" {
-  default = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.15.0/f5-appsvcs-3.15.0-6.noarch.rpm"
+  default = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.18.0/f5-appsvcs-3.18.0-4.noarch.rpm"
 }
 
-## Please check and update the latest AS3 URL from https://github.com/F5Networks/f5-appsvcs-extension/releases/latest 
+## Please check and update the latest TS URL from https://github.com/F5Networks/f5-appsvcs-extension/releases/latest 
 variable "TS_URL" {
-  default = "https://github.com/F5Networks/f5-telemetry-streaming/releases/download/v1.7.0/f5-telemetry-1.7.0-1.noarch.rpm"
+  default = "https://github.com/F5Networks/f5-telemetry-streaming/releases/download/v1.10.0/f5-telemetry-1.10.0-2.noarch.rpm"
 }
-
