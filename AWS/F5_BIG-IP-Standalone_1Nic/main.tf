@@ -50,9 +50,18 @@ module "aws_ubuntu_systems" {
   ubuntu_instance_name  = var.ubuntu_instance_name
 }
 
+data "template_file" "as3_declaration" {
+  template = file("./templates/as3_declaration.tpl")
+  vars = {
+    aws_F5_public_ip  = module.aws_f5_standalone.f5_public_ip
+    aws_f5_pool_members = join("\",\n\"", module.aws_ubuntu_systems.ubuntu_private_ips)
+  }
+}
 
-
-
+resource "local_file" "as3_declaration_file" {
+  content  = data.template_file.as3_declaration.rendered
+  filename = "./as3_declaration.json"
+}
 
 
 
