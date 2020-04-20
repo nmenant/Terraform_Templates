@@ -1,8 +1,8 @@
 {
     "class": "ADC",
     "schemaVersion": "3.0.0",
-    "id": "my-web-app-demo-beacon",
-    "label": "app to demo F5 beacon",
+    "id": "my-web-app-demo",
+    "label": "app to demo AS3",
     "remark": "service generic to see VS name",
     "as3": {
         "class": "Tenant",
@@ -21,7 +21,7 @@
                 "class": "Pool",
                 "monitors": [
                     {
-                        "bigip": "/Common/http"
+                        "bigip": "/Common/gateway_icmp"
                     }
                 ],
                 "members": [

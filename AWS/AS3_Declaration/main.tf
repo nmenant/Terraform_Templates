@@ -7,5 +7,5 @@ provider "bigip" {
 
 resource "bigip_as3"  "as3-base-declaration" {
   as3_json    = "${file(var.as3_filename)}"
-  config_name = var.f5_config_name
+  tenant_name = var.f5_config_name
  }
