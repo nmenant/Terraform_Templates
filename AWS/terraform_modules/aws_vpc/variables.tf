@@ -3,6 +3,16 @@ variable "vpc_cidr" {
     type = "string"
 }
 
+variable "mgmt_subnet1_cidr" {
+  description = "First mgmt subnet IP range"
+  type = "string"
+}
+
+variable "mgmt_subnet2_cidr" {
+  description = "2nd mgmt subnet IP range"
+  type = "string"
+}
+
 variable "public_subnet1_cidr" {
   description = "First public subnet IP range"
   type = "string"
