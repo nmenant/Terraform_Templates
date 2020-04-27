@@ -69,6 +69,18 @@
             "allowService": "default",
             "trafficGroup": "traffic-group-local-only"
         },
+        "bigip2_internal_route": {
+            "class": "Route",
+            "gw": "10.10.20.1",
+            "network": "10.10.21.0/24",
+            "mtu": 1500
+        },
+        "managementRoute": {
+            "class": "ManagementRoute",
+            "gw": "10.10.0.1",
+            "network": "default",
+            "mtu": 1500
+        },
         "configsync": {
     		"class": "ConfigSync",
     		"configsyncIp": "/Common/internal-self/address"
