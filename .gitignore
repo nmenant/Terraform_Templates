@@ -11,5 +11,9 @@ terraform.tfvars
 #AS3 Declaration
 as3_declaration.json
 
+#DO Declaration
+do_*declaration.json
+
+
 #Ubuntu cloud init conf
 ubuntu_cloudinit.conf

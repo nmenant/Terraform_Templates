@@ -61,7 +61,7 @@ module "aws_ubuntu_systems" {
 data "template_file" "as3_declaration" {
   template = file("./templates/as3_declaration.tpl")
   vars = {
-    aws_F5_public_ip  = module.aws_f5_cluster.f5_bigip1_public_ip
+    aws_F5_public_ip  = sort(module.aws_f5_cluster.f5_bigip1_public_ips)[1]
     aws_f5_pool_members = join("\",\n\"", module.aws_ubuntu_systems.ubuntu_private_ips)
   }
 }
@@ -71,6 +71,32 @@ resource "local_file" "as3_declaration_file" {
   filename = "./as3_declaration.json"
 }
 
+data "template_file" "do_bigip1_declaration" {
+  template = file("./templates/do_bigip1_declaration.tpl")
+  vars = {
+    aws_f5_public_ip      = sort(module.aws_f5_cluster.f5_bigip1_public_ips)[0]
+    aws_f5_public_ip_app1 = sort(module.aws_f5_cluster.f5_bigip1_public_ips)[1]
+    aws_f5_private_ip     = sort(module.aws_f5_cluster.f5_bigip1_private_ip)[0]
+  }
+}
+
+resource "local_file" "do_bigip1_declaration_file" {
+  content  = data.template_file.do_bigip1_declaration.rendered
+  filename = "./do_bigip1_declaration.json"
+}
+
+data "template_file" "do_bigip2_declaration" {
+  template = file("./templates/do_bigip2_declaration.tpl")
+  vars = {
+    aws_f5_public_ip      = sort(module.aws_f5_cluster.f5_bigip2_public_ips)[0]
+    aws_f5_private_ip     = sort(module.aws_f5_cluster.f5_bigip2_private_ip)[0]
+  }
+}
+
+resource "local_file" "do_bigip2_declaration_file" {
+  content  = data.template_file.do_bigip2_declaration.rendered
+  filename = "./do_bigip2_declaration.json"
+}
 
 
 

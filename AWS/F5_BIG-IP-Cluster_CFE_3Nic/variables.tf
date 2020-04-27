@@ -76,7 +76,7 @@ variable "f5_instance_type" {
 
 variable "bigip_https_port" {
     description = "TCP Port use to access BIG-IP GUI or API"
-    default = "8443"
+    default = "443"
 }
 
 ## Please check and update the latest DO URL from https://github.com/F5Networks/f5-declarative-onboarding/releases

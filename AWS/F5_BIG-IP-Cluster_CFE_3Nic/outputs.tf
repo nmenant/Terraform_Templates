@@ -20,6 +20,13 @@ output "f5_bigip1_public_ip" {
 output "f5_bigip2_public_ip" {
   value = module.aws_f5_cluster.f5_bigip2_public_ip
 }
+output "f5_bigip1_public_ips" {
+  value = module.aws_f5_cluster.f5_bigip1_public_ips
+}
+output "f5_bigip2_public_ips" {
+  value = module.aws_f5_cluster.f5_bigip2_public_ips
+}
+
 
 output "allowed_ips" {
   value = var.AllowedIPs
