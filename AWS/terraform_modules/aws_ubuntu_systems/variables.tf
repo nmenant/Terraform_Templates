@@ -30,7 +30,12 @@ variable "AllowedIPs" {
 variable "owner" {
   type = "string"
 }
-
+variable "mgmt_subnet1_cidr" {
+  type = "string"
+}
+variable "mgmt_subnet2_cidr" {
+  type = "string"
+}
 variable "public_subnet1_cidr" {
   type = "string"
 }

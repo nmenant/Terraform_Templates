@@ -12,6 +12,12 @@ module "aws_f5_cluster" {
   f5_public_subnet2_id  = module.aws_vpc.public_subnet2_id
   f5_private_subnet1_id = module.aws_vpc.private_subnet1_id
   f5_private_subnet2_id = module.aws_vpc.private_subnet2_id
+  mgmt_subnet1_cidr     = module.aws_vpc.mgmt_subnet1_cidr
+  mgmt_subnet2_cidr     = module.aws_vpc.mgmt_subnet2_cidr
+  public_subnet1_cidr   = module.aws_vpc.public_subnet1_cidr
+  public_subnet2_cidr   = module.aws_vpc.public_subnet2_cidr
+  private_subnet1_cidr  = module.aws_vpc.private_subnet1_cidr
+  private_subnet2_cidr  = module.aws_vpc.private_subnet2_cidr
   key_name              = module.aws_vpc.key_name
   owner                 = "${var.owner}-${var.project_name}"
   AllowedIPs            = var.AllowedIPs
@@ -46,6 +52,8 @@ module "aws_ubuntu_systems" {
   owner                 = "${var.owner}-${var.project_name}"
   ubuntu_subnet_id_az1  = module.aws_vpc.private_subnet1_id
   ubuntu_subnet_id_az2  = module.aws_vpc.private_subnet2_id
+  mgmt_subnet1_cidr     = module.aws_vpc.mgmt_subnet1_cidr
+  mgmt_subnet2_cidr     = module.aws_vpc.mgmt_subnet2_cidr
   public_subnet1_cidr   = module.aws_vpc.public_subnet1_cidr
   public_subnet2_cidr   = module.aws_vpc.public_subnet2_cidr
   private_subnet1_cidr  = module.aws_vpc.private_subnet1_cidr

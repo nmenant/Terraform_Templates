@@ -34,6 +34,20 @@ resource "aws_security_group" "f5_bigip_sg" {
     protocol    = "tcp"
     cidr_blocks = var.AllowedIPs
   }
+  # Failover
+  ingress {
+    from_port   = 1026
+    to_port     = 1026
+    protocol    = "udp"
+    cidr_blocks = [var.mgmt_subnet1_cidr, var.mgmt_subnet2_cidr, var.public_subnet1_cidr, var.public_subnet2_cidr, var.private_subnet1_cidr, var.private_subnet2_cidr]  
+  }
+
+  ingress {
+    from_port       = -1
+    to_port         = -1
+    protocol        = "icmp"
+    cidr_blocks     = [var.mgmt_subnet1_cidr, var.mgmt_subnet2_cidr, var.public_subnet1_cidr, var.public_subnet2_cidr, var.private_subnet1_cidr, var.private_subnet2_cidr]  
+  }
 
   egress {
     from_port   = 0
