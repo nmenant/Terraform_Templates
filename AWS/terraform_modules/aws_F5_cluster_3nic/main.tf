@@ -62,14 +62,10 @@ resource "aws_eip" "bigip2-mgmt" {
 resource "aws_network_interface" "bigip1-public" {
   subnet_id         = var.f5_public_subnet1_id
   security_groups   = [aws_security_group.f5_bigip_sg.id]
-  #Let's provision 2 more private IP for applications
-  private_ips_count = 2
 }
 resource "aws_network_interface" "bigip2-public" {
   subnet_id         = var.f5_public_subnet2_id
   security_groups   = [aws_security_group.f5_bigip_sg.id]
-  #Let's provision 2 more private IP for applications
-  private_ips_count = 2
 }
 # 
 # Create Private Network Interfaces

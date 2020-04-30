@@ -44,13 +44,6 @@
             "allowService": "default",
             "trafficGroup": "traffic-group-local-only"
         },
-        "external-floating": {
-            "class": "SelfIp",
-            "address": "${aws_f5_public_ip_app1}/24",
-            "vlan": "external",
-            "allowService": "default",
-            "trafficGroup": "traffic-group-1"
-        },
         "internal": {
             "class": "VLAN",
             "tag": 4093,

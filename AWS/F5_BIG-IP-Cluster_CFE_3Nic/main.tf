@@ -52,10 +52,6 @@ module "aws_ubuntu_systems" {
   owner                 = "${var.owner}-${var.project_name}"
   ubuntu_subnet_id_az1  = module.aws_vpc.private_subnet1_id
   ubuntu_subnet_id_az2  = module.aws_vpc.private_subnet2_id
-  mgmt_subnet1_cidr     = module.aws_vpc.mgmt_subnet1_cidr
-  mgmt_subnet2_cidr     = module.aws_vpc.mgmt_subnet2_cidr
-  public_subnet1_cidr   = module.aws_vpc.public_subnet1_cidr
-  public_subnet2_cidr   = module.aws_vpc.public_subnet2_cidr
   private_subnet1_cidr  = module.aws_vpc.private_subnet1_cidr
   private_subnet2_cidr  = module.aws_vpc.private_subnet2_cidr
   key_name              = module.aws_vpc.key_name
@@ -69,7 +65,7 @@ module "aws_ubuntu_systems" {
 data "template_file" "as3_declaration" {
   template = file("./templates/as3_declaration.tpl")
   vars = {
-    aws_F5_public_ip  = sort(module.aws_f5_cluster.f5_bigip1_public_ips)[1]
+    aws_F5_public_ip  = sort(module.aws_f5_cluster.f5_bigip1_public_ips)[0]
     aws_f5_pool_members = join("\",\n\"", module.aws_ubuntu_systems.ubuntu_private_ips)
   }
 }
@@ -83,7 +79,6 @@ data "template_file" "do_bigip1_declaration" {
   template = file("./templates/do_bigip1_declaration.tpl")
   vars = {
     aws_f5_public_ip      = sort(module.aws_f5_cluster.f5_bigip1_public_ips)[0]
-    aws_f5_public_ip_app1 = sort(module.aws_f5_cluster.f5_bigip1_public_ips)[1]
     aws_f5_private_ip     = sort(module.aws_f5_cluster.f5_bigip1_private_ip)[0]
   }
 }

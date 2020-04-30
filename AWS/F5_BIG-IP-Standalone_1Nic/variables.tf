@@ -22,6 +22,15 @@ variable "vpc_cidr" {
     description = "AWS VPC CIDR"
     default = "10.10.0.0/16"
 }
+variable "mgmt_subnet1_cidr" {
+  description = "First mgmt subnet IP range"
+  default = "10.10.0.0/24"
+}
+
+variable "mgmt_subnet2_cidr" {
+  description = "2nd mgmt subnet IP range"
+  default = "10.10.1.0/24"
+}
 variable "public_subnet1_cidr" {
   description = "First public subnet IP range"
   default = "10.10.10.0/24"
