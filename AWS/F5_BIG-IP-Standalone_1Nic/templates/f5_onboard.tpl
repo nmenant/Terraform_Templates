@@ -96,6 +96,8 @@ sleep 5
 
 tmsh modify auth user admin password Cn1c0las123
 
+tmsh modify sys software update auto-phonehome disabled
+
 tmsh save sys config
 
 EOF

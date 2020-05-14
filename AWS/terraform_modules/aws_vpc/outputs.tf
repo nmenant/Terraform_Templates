@@ -2,7 +2,18 @@
 output "vpc_default_id" {
   value = aws_vpc.default.id
 }
-
+output "mgmt_subnet1_id" {
+  value = aws_subnet.mgmt-subnet1.id
+}
+output "mgmt_subnet1_cidr" {
+  value = var.mgmt_subnet1_cidr
+}
+output "mgmt_subnet2_id" {
+  value = aws_subnet.mgmt-subnet2.id
+}
+output "mgmt_subnet2_cidr" {
+  value = var.mgmt_subnet2_cidr
+}
 output "public_subnet1_id" {
   value = aws_subnet.public-subnet1.id
 }

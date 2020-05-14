@@ -76,7 +76,7 @@ variable "f5_instance_type" {
 
 variable "bigip_https_port" {
     description = "TCP Port use to access BIG-IP GUI or API"
-    default = "8443"
+    default = "443"
 }
 
 ## Please check and update the latest DO URL from https://github.com/F5Networks/f5-declarative-onboarding/releases
@@ -93,7 +93,9 @@ variable "AS3_URL" {
 variable "TS_URL" {
   default = "https://github.com/F5Networks/f5-telemetry-streaming/releases/download/v1.10.0/f5-telemetry-1.10.0-2.noarch.rpm"
 }
-
+variable "CFE_URL" {
+  default = "https://github.com/F5Networks/f5-cloud-failover-extension/releases/download/v1.2.0/f5-cloud-failover-1.2.0-0.noarch.rpm"
+}
 
 variable "app_tag_value" {}
 

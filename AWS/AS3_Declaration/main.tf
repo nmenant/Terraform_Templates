@@ -5,7 +5,6 @@ provider "bigip" {
   password    = var.f5_admin_password
 }
 
-resource "bigip_as3"  "as3-base-declaration" {
+resource "bigip_as3"  "as3-declaration" {
   as3_json    = "${file(var.as3_filename)}"
-  tenant_name = var.f5_config_name
  }

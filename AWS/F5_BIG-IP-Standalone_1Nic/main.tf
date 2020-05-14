@@ -26,6 +26,8 @@ module "aws_vpc" {
   aws_az1               = var.aws_az1
   aws_az2               = var.aws_az2
   vpc_cidr              = var.vpc_cidr
+  mgmt_subnet1_cidr     = var.mgmt_subnet1_cidr
+  mgmt_subnet2_cidr     = var.mgmt_subnet2_cidr
   public_subnet1_cidr   = var.public_subnet1_cidr
   public_subnet2_cidr   = var.public_subnet2_cidr
   private_subnet1_cidr  = var.private_subnet1_cidr
@@ -38,8 +40,6 @@ module "aws_ubuntu_systems" {
   owner                 = "${var.owner}-${var.project_name}"
   ubuntu_subnet_id_az1  = module.aws_vpc.private_subnet1_id
   ubuntu_subnet_id_az2  = module.aws_vpc.private_subnet2_id
-  public_subnet1_cidr   = module.aws_vpc.public_subnet1_cidr
-  public_subnet2_cidr   = module.aws_vpc.public_subnet2_cidr
   private_subnet1_cidr  = module.aws_vpc.private_subnet1_cidr
   private_subnet2_cidr  = module.aws_vpc.private_subnet2_cidr
   key_name              = module.aws_vpc.key_name

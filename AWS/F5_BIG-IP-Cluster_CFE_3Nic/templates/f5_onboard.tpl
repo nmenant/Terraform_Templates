@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Script must be non-blocking or run in the background.
+
+mkdir -p /config/cloud
+
+cat << 'EOF' > /config/cloud/startup-script.sh
+#!/bin/bash
+
 # BIG-IPS ONBOARD SCRIPT
 
 LOG_FILE=${onboard_log}
@@ -15,11 +22,24 @@ fi
 
 exec 1>$LOG_FILE 2>&1
 
+checks=0
+while [ $checks -lt 120 ]; do echo checking mcpd
+  tmsh -a show sys mcp-state field-fmt | grep -q running
+  if [ $? == 0 ]; then
+    echo mcpd ready
+    break
+  fi
+  echo mcpd not ready yet
+  let checks=checks+1
+  sleep 10
+done
+
+
 # CHECK TO SEE NETWORK IS READY
 CNT=0
 while true
 do
-  STATUS=$(curl -s -k -I example.com | grep HTTP)
+  STATUS=$(curl -s -k -I https://github.com | grep HTTP)
   if [[ $STATUS == *"200"* ]]; then
     echo "Got 200! VE is Ready!"
     break
@@ -42,10 +62,8 @@ AS3_URL='${AS3_URL}'
 AS3_FN=$(basename "$AS3_URL")
 TS_URL='${TS_URL}'
 TS_FN=$(basename "$TS_URL")
-
-ADMIN_PWD='${ADMIN_PASSWD}'
-
-CREDS="admin:$ADMIN_PWD"
+CFE_URL='${CFE_URL}'
+CFE_FN=$(basename "$CFE_URL")
 
 mkdir -p ${libs_dir}
 
@@ -57,6 +75,9 @@ curl -L -o ${libs_dir}/$AS3_FN $AS3_URL
 
 echo -e "\n"$(date) "Download TS Pkg"
 curl -L -o ${libs_dir}/$TS_FN $TS_URL
+
+echo -e "\n"$(date) "Download CFE Pkg"
+curl -L -o ${libs_dir}/$CFE_FN $CFE_URL
 
 # Copy the RPM Pkg to the file location
 cp ${libs_dir}/*.rpm /var/config/rest/downloads/
@@ -76,10 +97,24 @@ DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/download
 echo -e "\n"$(date) "Install TS Pkg"
 restcurl -X POST "shared/iapp/package-management-tasks" -d $DATA
 
+# Install CFE Pkg
+DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$CFE_FN\"}"
+echo -e "\n"$(date) "Install CFE Pkg"
+restcurl -X POST "shared/iapp/package-management-tasks" -d $DATA
+
 sleep 5
 
-tmsh modify auth user admin password $ADMIN_PWD
+tmsh modify auth user admin password Cn1c0las123
 
 tmsh modify sys software update auto-phonehome disabled
 
+tmsh modify sys db setup.run value false
+
 tmsh save sys config
+
+EOF
+
+
+# Now run in the background to not block startup
+chmod 755 /config/cloud/startup-script.sh 
+nohup /config/cloud/startup-script.sh &
