@@ -12,7 +12,7 @@
             "MyWebService": {
                 "class": "Service_HTTP",
                 "virtualAddresses": [
-                    "${aws_F5_public_ip}"
+                    "${azure_F5_public_ip}"
                 ],
                 "virtualPort": 81,
                 "pool": "websvc_pool"
@@ -28,7 +28,7 @@
                     {
                         "servicePort": 80,
                         "serverAddresses": [
-                            "${aws_f5_pool_members}"
+                            "${azure_f5_pool_members}"
                         ],
                         "shareNodes": true
                     }
