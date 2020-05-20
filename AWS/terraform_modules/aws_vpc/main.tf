@@ -73,12 +73,37 @@ resource "aws_subnet" "private-subnet2" {
   }
 }
 
+# Create the Internet Gateway 
+
 resource "aws_internet_gateway" "internet-gw" {
   vpc_id = aws_vpc.default.id
   tags = {
     Name = "${var.owner}-InternetGw"
   }
 }
+# Get EIP for Both NAT GW
+
+resource "aws_eip" "eip-nat-gw-public1" {
+
+}
+
+resource "aws_eip" "eip-nat-gw-public2" {
+
+}
+
+# Create One NAT GW per Public Subnet
+
+resource "aws_nat_gateway" "nat-gw-public-subnet1" {
+  allocation_id = aws_eip.eip-nat-gw-public1.id
+  subnet_id = aws_subnet.public-subnet1.id
+}
+
+resource "aws_nat_gateway" "nat-gw-public-subnet2" {
+  allocation_id = aws_eip.eip-nat-gw-public2.id
+  subnet_id = aws_subnet.public-subnet2.id
+}
+
+# Create public route table
 
 resource "aws_route_table" "public-route-table" {
   vpc_id        = aws_vpc.default.id
@@ -92,18 +117,7 @@ resource "aws_route_table" "public-route-table" {
   }
 }
 
-# Assign the route table to the public Subnets
-resource "aws_route_table_association" "mgmt1-rt" {
-  subnet_id       = aws_subnet.mgmt-subnet1.id
-  route_table_id  = aws_route_table.public-route-table.id
-}
-
-resource "aws_route_table_association" "mgmt2-rt" {
-  subnet_id       = aws_subnet.mgmt-subnet2.id
-  route_table_id  = aws_route_table.public-route-table.id
-}
-
-# Assign the route table to the public Subnets
+# Assign the public subnets to route table public-route-table 
 resource "aws_route_table_association" "public1-rt" {
   subnet_id       = aws_subnet.public-subnet1.id
   route_table_id  = aws_route_table.public-route-table.id
@@ -114,15 +128,55 @@ resource "aws_route_table_association" "public2-rt" {
   route_table_id  = aws_route_table.public-route-table.id
 }
 
-# Assign the route table to the private Subnets
-resource "aws_route_table_association" "private1-rt" {
-  subnet_id       = aws_subnet.private-subnet1.id
+# Assign the mgmt subnets to public route table 
+resource "aws_route_table_association" "mgmt1-rt" {
+  subnet_id       = aws_subnet.mgmt-subnet1.id
   route_table_id  = aws_route_table.public-route-table.id
 }
 
+resource "aws_route_table_association" "mgmt2-rt" {
+  subnet_id       = aws_subnet.mgmt-subnet2.id
+  route_table_id  = aws_route_table.public-route-table.id
+}
+
+# Create private route table for private subnet1 using the nat gw 1 as default route
+
+resource "aws_route_table" "private-route-table1" {
+  vpc_id        = aws_vpc.default.id
+  route {
+    cidr_block  = "0.0.0.0/0"
+    gateway_id  = aws_nat_gateway.nat-gw-public-subnet1.id
+  }
+
+  tags = {
+    Name        = "${var.owner}-Private-RouteTable1"
+  }
+}
+
+# Create private route table for private subnet2 using the nat gw 1 as default route
+
+resource "aws_route_table" "private-route-table2" {
+  vpc_id        = aws_vpc.default.id
+  route {
+    cidr_block  = "0.0.0.0/0"
+    gateway_id  = aws_nat_gateway.nat-gw-public-subnet2.id
+  }
+
+  tags = {
+    Name        = "${var.owner}-Private-RouteTable2"
+  }
+}
+# Assign the private subnet1 to route table private-route-table1
+resource "aws_route_table_association" "private1-rt" {
+  subnet_id       = aws_subnet.private-subnet1.id
+  route_table_id  = aws_route_table.private-route-table1.id
+}
+
+# Assign the private subnet2 to route table private-route-table2
+
 resource "aws_route_table_association" "private2-rt" {
   subnet_id       = aws_subnet.private-subnet2.id
-  route_table_id  = aws_route_table.public-route-table.id
+  route_table_id  = aws_route_table.private-route-table2.id
 }
 
 resource "aws_key_pair" "default" {
