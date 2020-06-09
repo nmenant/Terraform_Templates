@@ -1,29 +1,29 @@
 variable "vpc_id" {
-    type = "string"
+    type = string
 }
 variable "aws_region" {
-  type = "string"
+  type = string
 }
 variable "f5_subnet1_id" {
-  type = "string"
+  type = string
 }
 variable "key_name" {
-  type = "string"
+  type = string
 }
 variable "AllowedIPs" {
   type = list(string)
 }
 
 variable "f5_name_filter" {
-  type = "string"
+  type = string
 }
 
 variable "bigip_https_port" {
-  type = "string"
+  type = string
 }
 
 variable "owner" {
-  type = "string"
+  type = string
 }
 
 variable libs_dir { 
@@ -34,18 +34,18 @@ variable onboard_log {
 }
 
 variable AS3_URL {
-  type = "string"
+  type = string
 }
 
 variable DO_URL {
-  type = "string"
+  type = string
 }
 
 variable TS_URL {
-  type = "string"
+  type = string
 }
 
 variable "f5_instance_type" {
-  type = "string"
+  type = string
 }
 
