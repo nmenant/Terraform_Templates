@@ -1,51 +1,51 @@
 variable "vpc_cidr" {
     description = "AWS VPC CIDR"
-    type = "string"
+    type = string
 }
 
 variable "mgmt_subnet1_cidr" {
   description = "First mgmt subnet IP range"
-  type = "string"
+  type = string
 }
 
 variable "mgmt_subnet2_cidr" {
   description = "2nd mgmt subnet IP range"
-  type = "string"
+  type = string
 }
 
 variable "public_subnet1_cidr" {
   description = "First public subnet IP range"
-  type = "string"
+  type = string
 }
 
 variable "public_subnet2_cidr" {
   description = "2nd public subnet IP range"
-  type = "string"
+  type = string
 }
 
 variable "private_subnet1_cidr" {
   description = "2nd public subnet IP range"
-  type = "string"
+  type = string
 }
 
 variable "private_subnet2_cidr" {
   description = "2nd public subnet IP range"
-  type = "string"
+  type = string
 }
 variable "aws_region" {
-  type = "string"
+  type = string
 }
 variable "key_path" {
-  type = "string"
+  type = string
 }
 variable "aws_az1" {
-  type = "string"
+  type = string
 }
 variable "aws_az2" {
-  type = "string"
+  type = string
 }
 
 variable "owner" {
-  type = "string"
+  type = string
 }
 
