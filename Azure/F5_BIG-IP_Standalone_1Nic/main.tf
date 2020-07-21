@@ -9,6 +9,7 @@
 ##    tenant_id       = "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 ##}
 provider "azurerm" {
+  features {}
 }
 
 data "azurerm_resource_group" "rg_keyvault" {
