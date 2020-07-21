@@ -17,7 +17,6 @@ resource "azurerm_network_interface" "bigip1_nic" {
   name                      = "${var.owner}-bigip1-mgmt-nic"
   location                  = var.azure_region
   resource_group_name       = var.azure_rg_name
-  network_security_group_id = azurerm_network_security_group.bigip_sg.id
 
   ip_configuration {
     name                          = "primary"
@@ -30,6 +29,11 @@ resource "azurerm_network_interface" "bigip1_nic" {
     Name           = "${var.owner}-bigip1-mgmt-nic"
     owner          = var.owner
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "bigip_1nic_sg" {
+  network_interface_id = azurerm_network_interface.bigip1_nic.id
+  network_security_group_id = azurerm_network_security_group.bigip_sg.id
 }
 
 data "template_file" "f5_bigip_onboard" {
@@ -103,15 +107,14 @@ resource "azurerm_virtual_machine" "f5-bigip1" {
     Name           = "${var.owner}-f5bigip1"
     owner          = var.owner
   }
+  depends_on = [azurerm_network_interface_security_group_association.bigip_1nic_sg]
 }
 
 # Run Startup Script
 resource "azurerm_virtual_machine_extension" "f5-bigip1-run-startup-cmd" {
   name                 = "${var.owner}-f5-bigip1-run-startup-cmd"
   depends_on           = [azurerm_virtual_machine.f5-bigip1]
-  location             = var.azure_region
-  resource_group_name  = var.azure_rg_name
-  virtual_machine_name = azurerm_virtual_machine.f5-bigip1.name
+  virtual_machine_id = azurerm_virtual_machine.f5-bigip1.id
   publisher            = "Microsoft.OSTCExtensions"
   type                 = "CustomScriptForLinux"
   type_handler_version = "1.2"

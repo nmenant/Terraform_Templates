@@ -30,7 +30,6 @@ resource "azurerm_network_interface" "ubuntu_az1_privatenics" {
     name                          = "${var.owner}-${var.ubuntu_instance_name}-az1-private-nic-${format("%02d", count.index+1)}"
     location                      = var.azure_region
     resource_group_name           = var.azure_rg_name
-    network_security_group_id     = azurerm_network_security_group.azure_ubuntu_sg.id
 
     ip_configuration {
         name                          = "${var.owner}-${var.ubuntu_instance_name}-az1-private-ip-${format("%02d", count.index+1)}"
@@ -44,12 +43,17 @@ resource "azurerm_network_interface" "ubuntu_az1_privatenics" {
     }
 }
 
+resource "azurerm_network_interface_security_group_association" "nginx_az1_nic_sg" {
+  count                         = var.ubuntu_instance_count  
+  network_interface_id          = azurerm_network_interface.ubuntu_az1_privatenics[count.index].id
+  network_security_group_id     = azurerm_network_security_group.azure_ubuntu_sg.id
+}
+
 resource "azurerm_network_interface" "ubuntu_az2_privatenics" {
     count                         = var.ubuntu_instance_count
     name                          = "${var.owner}-${var.ubuntu_instance_name}-az2-private-nic-${format("%02d", count.index+1)}"
     location                      = var.azure_region
     resource_group_name           = var.azure_rg_name
-    network_security_group_id     = azurerm_network_security_group.azure_ubuntu_sg.id
 
     ip_configuration {
         name                          = "${var.owner}-${var.ubuntu_instance_name}-az2-private-ip-${format("%02d", count.index+1)}"
@@ -61,6 +65,12 @@ resource "azurerm_network_interface" "ubuntu_az2_privatenics" {
     tags = {
         environment = var.owner
     }
+}
+
+resource "azurerm_network_interface_security_group_association" "nginx_az2_nic_sg" {
+  count                         = var.ubuntu_instance_count  
+  network_interface_id          = azurerm_network_interface.ubuntu_az2_privatenics[count.index].id
+  network_security_group_id     = azurerm_network_security_group.azure_ubuntu_sg.id
 }
 
 ##
