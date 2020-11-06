@@ -5,6 +5,7 @@ resource "azurerm_public_ip" "ubuntu_az1_publicips" {
     location                     = var.azure_region
     resource_group_name          = var.azure_rg_name
     allocation_method            = "Static"
+    sku                          = "Standard"
     zones                        = [var.ubuntu_subnet_id_az1]
 
     tags = {
@@ -18,6 +19,7 @@ resource "azurerm_public_ip" "ubuntu_az2_publicips" {
     location                     = var.azure_region
     resource_group_name          = var.azure_rg_name
     allocation_method            = "Static"
+    sku                          = "Standard"
     zones                        = [var.ubuntu_subnet_id_az2]
 
     tags = {

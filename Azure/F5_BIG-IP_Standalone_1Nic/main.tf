@@ -13,11 +13,11 @@ provider "azurerm" {
 }
 
 data "azurerm_resource_group" "rg_keyvault" {
-  name = "${var.azure_secret_rg}"
+  name = var.azure_secret_rg
 }
  
 data "azurerm_key_vault" "keyvault" {
-  name = "${var.azure_keyvault_name}"
+  name = var.azure_keyvault_name
   resource_group_name = "${data.azurerm_resource_group.rg_keyvault.name}"
 }
  
